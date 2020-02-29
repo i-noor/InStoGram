@@ -5,11 +5,11 @@ const Images = React.memo(({images}) => {
       
     
 
-    return (
-        <div className={''}>
-           {images.map(image => <img src={image} />)}
-        </div>
-    )
+    // return (
+    //     <div className={''}>
+    //        {images.map(image => <img src={image} />)}
+    //     </div>
+    // )
 });
 
 export default Images;

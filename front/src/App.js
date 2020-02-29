@@ -1,24 +1,22 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { httpGetImages} from "./api/v1";
-import Images from "./components/Images";
+import { Route, Switch, HashRouter } from "react-router-dom";
+import MainPage from "./Pages/Main";
+import LoginPage from "./Pages/Login";
+import UsersPage from "./Pages/Users";
+import NotFound from "./Pages/Login";
 
-function App() {
-  const images = httpGetImages().then(res => 
-          console.log(res)
-        );
-  console.log(images)
+function App() {  
   return (
-    <div className="App">
-      <header className="App-header">        
-        <form action="/upload" method="post" encType="multipart/form-data">         
-          <input type="file" name="filedata" />
-          <input type="submit" value="Send" />
-        </form>
-        {/*<Images images={images}/>*/}
-      </header>
-    </div>
+    <HashRouter>
+      <Switch>
+          <Route exact={true} path="/" component={MainPage} />
+          <Route exact={true} path="/login" component={LoginPage} />  
+          <Route exact={true} path="/users" component={UsersPage} />     
+          {<Route component={MainPage} />}
+        </Switch>  
+      </HashRouter>  
   );
 }
 
