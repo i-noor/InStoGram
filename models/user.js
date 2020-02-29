@@ -26,18 +26,17 @@ module.exports = {
 		// count	- вернуть количество записей, подходящее под условия запроса
 		return dbh.get_sql(
 			'SELECT '+(
-				count ? 'COUNT(*) count' : '`user`.*'
+				count ? 'COUNT(*) count' : table+'.*'
 			)+' FROM `'+table+'` '+
 			'WHERE ('+
-				(start ? '`id` '+(dir ? '>=' : '<=')+' '+start : '1')+' AND '+
-				(options.age>0 ? '`age` = '+options.age+' AND '	: '')+
-				'`deleted` = 0 '+
+				(start ? '`id` '+(dir ? '>=' : '<=')+' '+start : '1')+
+				(options.age>0 ? ' AND `age` = '+options.age	: '')+				
 			') '+(
 				count
 				? ''
 				: (
-					'GROUP BY `user`.`id` '+
-					'ORDER BY `user`.`id` '+(rev ? 'DESC' : 'ASC')+' '+
+					'GROUP BY ' + table+'.`id` '+
+					'ORDER BY `'+ table+'`.`id` '+(rev ? 'DESC' : 'ASC')+' '+
 					(limit ? 'LIMIT '+offset+','+limit : '')
 				)
 			)
