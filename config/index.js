@@ -1,6 +1,6 @@
 module.exports = {
 	server: {
-		port: 7500,
+		port: 8080,
 	},
     dbh: require("./dbh"),
 	session: {
