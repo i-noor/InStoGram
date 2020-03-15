@@ -1,8 +1,8 @@
 // Полезные функции
 var f = require("../functions");
-
+var path = require('path');
 // Модель для работы с бд
-var model = require("../models/images");
+var model = require("../models/image");
 
 var author_id = 1;
 // Добавление
@@ -26,24 +26,30 @@ exports.add = (req,res) => {
 			name:	file.name,
 			mimetype:	file.mimetype,
 			author_id: author_id
-		}));
-		
+		})).then(result=>{
+			var ext = path.extname(file.name);
+			// Сохраняем файл по указанному адресу
+			file.mv('images/'+result.insertId+ext,(err) => {
+				if(err) return res.status(500).send(err);
+				res.send({response:{
+							id:result.insertId,
+							name:	file.name,
+							mimetype:	file.mimetype,
+							author_id: author_id
+						}});
+			});
+		});		
 	} catch (err) {
 		res.send({error:'internal_error'});
 	}
 
-	// Сохраняем файл по указанному адресу
-	file.mv('images/'+image_id,(err) => {
-		if(err) return res.status(500).send(err);
-		res.send({response:'/images/'+image_id});
-	});
+	
 }
 
 // Получение
-exports.get = async (req,res) => {
-	var data = req.body;
-
-	var id = +f.parse_int(data.id);
+exports.get = async (req,res) => {	
+	console.log(req.params)
+	var id = +f.parse_int(req.params.imageId);
 
 	try {
 		var output = await model.gti(id);
@@ -98,8 +104,8 @@ exports.update = async (req,res) => {
 	if('age'	in data && data.age>0)			obj.age		= f.parse_int(data.age);
 
 	try {
-		// Предполагается, что мы еще до этого проверили подлинность user_id
-		await model.update(data.user_id,obj);
+		// Предполагается, что мы еще до этого проверили подлинность image_id
+		await model.update(data.image_id,obj);
 
 		res.send({response:1});
 	} catch (err) {
@@ -108,11 +114,11 @@ exports.update = async (req,res) => {
 }
 // Удаление
 exports.delete = async (req,res) => {
-	var data = req.body;
+	var image_id = req.params.imageId;
 
 	try {
-		// Предполагается, что мы еще до этого проверили подлинность user_id
-		await model.delete(data.user_id);
+		// Предполагается, что мы еще до этого проверили подлинность image_id
+		await model.delete(image_id);
 		res.send({response:1});
 	} catch (err) {
 		res.send({error:'internal_error'});

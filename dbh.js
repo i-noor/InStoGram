@@ -85,6 +85,7 @@ exports.add = function(table,options,debug_mode = false) {
 				reject(e);
 				console.log('Ошибка','Function add('+table+'): '+this.sql+'\n',e.message);
 			} else {
+				console.log(res)
 				resolve(res);
 			}
 		});

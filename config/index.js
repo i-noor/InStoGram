@@ -6,10 +6,7 @@ module.exports = {
 	session: {
 		secret: 'XSS',
 		key: 'sid',
-		cookie: {
-			path: '/api',
-			httpOnly: true,
-			maxAge: 60*60*1000,
+		cookie: {			
 			secure: true,
 		},
 		resave: false,

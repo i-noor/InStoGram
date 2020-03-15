@@ -9,6 +9,9 @@ module.exports = {
 	create(data) {
 		return dbh.add(table,[data]);
 	},
+	login(login, password){
+		return dbh.get_sql('SELECT * FROM `'+table+'` WHERE (`login` = "'+login+'" AND `password` = "'+password+'")');		
+	},
 	// Нахождение по номеру
 	gti(id) {
 		return this.get_by_id(id);

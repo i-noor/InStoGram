@@ -7,7 +7,7 @@ var table = 'images';
 module.exports = {
 	// Создание
 	create(data) {
-		return dbh.add(table,[data]);
+		return dbh.add(table,[data]).then(res=>res);
 	},
 	// Нахождение по номеру
 	gti(id) {
