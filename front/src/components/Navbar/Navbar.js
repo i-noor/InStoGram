@@ -1,9 +1,10 @@
 import React from 'react';
-import {Navbar, Form, FormControl, Nav, Button} from 'react-bootstrap'
+import {Navbar, Form, FormControl, Nav, Button, Container} from 'react-bootstrap'
 
 function Navigation() {	
     return (
         <Navbar bg="dark" variant="dark">
+        	<Container>
 		    <Navbar.Brand href="/">И</Navbar.Brand>
 		    <Nav className="mr-auto">
 		      <Nav.Link href="/">Главная</Nav.Link>
@@ -15,6 +16,7 @@ function Navigation() {
 		      <Nav.Link href="#login">Войти</Nav.Link>
 		    </Nav>
 		    </Form>
+		    </Container>
 		  </Navbar>		 
     )
 };

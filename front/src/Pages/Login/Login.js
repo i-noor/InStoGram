@@ -1,25 +1,43 @@
 import React from 'react';
 import {Form, Button, Jumbotron, Container} from 'react-bootstrap'
 import Navbar from "../../components/Navbar";
+import { httpLogIn} from "../../api/v1";
 import s from "./Login.module.scss"
 
 function Login() {	
+	const id = (e) => {return document.getElementById(e)}
+	const onLogIn = async (e) => {	  
+		e.preventDefault(); 
+	    var form = JSON.stringify(
+		    {
+		    	'login': id('login').value,
+		    	'password': id('password').value
+		    }
+	    )
+	    console.log(form)
+	    httpLogIn(form)
+	      .then(data => console.log(data))
+	      .catch(err => {
+	        console.error(err);	        
+	      });
+	  }  
+
     return (
     	<>
     	<Navbar />
     	<Container>
 	    	<Jumbotron className={s.jumbotron}>      
-		        <Form>
+		        <Form id="form" onSubmit={onLogIn}>
 		        	<Form.Label className={s.title}>Вход</Form.Label>
-				  <Form.Group controlId="formGroupEmail">
+				  <Form.Group controlId="login">
 				    
-				    <Form.Control type="email" placeholder="Логин" />
+				    <Form.Control type="text" placeholder="Логин" required/>
 				  </Form.Group>
-				  <Form.Group controlId="formGroupPassword">			    
-				    <Form.Control type="password" placeholder="Пароль" />
+				  <Form.Group controlId="password">			    
+				    <Form.Control type="password" placeholder="Пароль" required/>
 				  </Form.Group>
-				</Form>
-				<Button variant="dark">Войти</Button>  
+				  <Button variant="dark" type="submit">Войти</Button> 
+				</Form>				 
 			</Jumbotron>
 		</Container>
 		</>

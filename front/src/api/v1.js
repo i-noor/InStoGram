@@ -1,22 +1,47 @@
 
 export const httpGetImages = async () => {   
-    return fetch('http://localhost:8080/api/v1/image/list',{
-      method: "POST",      
-    })
+    return fetch('http://localhost:8080/api/v1/images')
     .then(response => response.json())
-    .then(json =>  console.log(json)) 
+    .then(json =>  json) 
     .catch(console.log)
 };
 
 export const httpSendImage = async (form) => {
-    return fetch('http://localhost:8080/api/v1/image/add',{method:'POST',body:form, headers:{'Access-Control-Allow-Origin':'*'}})
+    return fetch('http://localhost:8080/api/v1/images',{ method:'POST', body:form})
           .then(str  => str.json())
+}
+
+export const httpDeleteImage = async (id) => {
+    return fetch('http://localhost:8080/api/v1/images/'+id,{ method:'DELETE'})
+          .then(str  => str.json())
+}
+
+export const httpLogIn = async (form) => {
+    return fetch('http://localhost:8080/api/v1/session/new',{
+        method:'POST',      
+        headers : { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body:form})
+        .then(str  => str.json())  
+}
+
+export const httpAuth = async (form) => {
+    return fetch('http://localhost:8080/api/v1/session/',{
+        method:'POST',      
+        headers : { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body:form})
+        .then(str  => str.json())  
 }
 
 
 export const httpGetUsers = async () => { 
 
-  return fetch('http://localhost:8080/api/v1/user/list',{
+  return fetch('http://localhost:8080/api/v1/users/',{
       method: "POST",      
     })
   .then(response => response.json())

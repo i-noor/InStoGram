@@ -1,0 +1,33 @@
+@import "../../App.scss";
+:export { baseColor: $base-color; }
+
+.label{
+	color:$base-color;
+	font-size: 28px;
+}
+
+.image{
+	height: 200px;
+	width: 200px;
+	background-size: cover;
+	background-position: center;
+	border-radius: 5px
+}
+
+.col{
+	margin-bottom: 20px;
+}
+.delete{
+	cursor: pointer;
+	left: 185px;
+    top: 10px;
+    font-size: 18px;
+    position: absolute;
+    background: #e74b41;
+    border-radius: 3px;
+    display: none;
+}
+
+.image:hover .delete{
+	display: block;
+}

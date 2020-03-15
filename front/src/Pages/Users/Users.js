@@ -35,7 +35,7 @@ const Users = () => {
     	<Navbar />
     	<Container>
 	    	<Jumbotron className={s.jumbotron}>      
-		        {users.map(user=><div key={user.id}>{user.name}</div>)}
+		        {users && users.map(user=><div key={user.id}>{user.name}</div>)}
 			</Jumbotron>
 		</Container>
 		</>
