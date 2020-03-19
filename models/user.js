@@ -19,6 +19,9 @@ module.exports = {
 	get_by_id(id) {
 		return dbh.gti(table,id);
 	},
+	get_by_login(login){
+		return dbh.get_sql('SELECT login FROM `'+table+'` WHERE (`login` = "'+login+'")');		
+	},
 	list(offset,limit,options,start,dir,rev,count = false) {
 		// offset	- отступ от начала выборки
 		// limit	- количество выбираемых записей

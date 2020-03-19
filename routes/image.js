@@ -12,6 +12,7 @@ module.exports = function(app) {
 			// Вставляем промежуточный обработчик - логирование
 			(req,res,next) => {
 				console.log('Запрос списка изображений');
+				console.log(req.session)
 				res.set('Access-Control-Allow-Origin','*');
 				res.set('Content-Type','application/json');
 				next();

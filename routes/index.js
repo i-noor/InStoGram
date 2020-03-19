@@ -19,7 +19,7 @@ module.exports = (app) => {
 	);
 
 	app.delete('/api/v1/session', (req,res,next) => {
-			console.log('Запрос auth');
+			console.log('Запрос delete session');
 
 			res.set('Access-Control-Allow-Origin','*');
 			res.set('Content-Type','application/json');

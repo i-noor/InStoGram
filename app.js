@@ -16,7 +16,7 @@ var cors = require('cors')
 
 app.use(cors()) // Use this after the variable declaration
 // Подключаем модули:
-// app.use(cookieParser());
+app.use(cookieParser());
 // Сессии
 app.use(session(config.session));
 

@@ -8,6 +8,7 @@ module.exports = {
 		key: 'sid',
 		cookie: {			
 			secure: true,
+			maxAge: 60*60*1000,
 		},
 		resave: false,
 		saveUninitialized: true,

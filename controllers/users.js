@@ -11,21 +11,38 @@ exports.add = (req,res) => {
 	var data = req.body;
 	console.log(req)
 	// Обязательное поле
-	if(!('name' in data) || data.name == '') return res.send({error:'parameter name is not defined'});
+	if(!('login' in data) || data.login == '') return res.send({error:'parameter login is not defined'});
+	if(!('password' in data) || data.password == '') return res.send({error:'parameter password is not defined'});
 
 	var name = f.htmlspecialchars(data.name);
 	var age = +f.parse_int(data.age);
+	let file;
+	if (req.files) file = req.files.file;
 
-	try {
-		// Нужно проверить все входные данные
-		var user_id = ( model.create({
-			name:	name,
-			age:	age,
-		})).insertId;
-
-		res.send({response:user_id});
+	try {	
+		(model.get_by_login(data.login).then(result=>{
+			console.log(result);
+			if (!result) {		
+				// Нужно проверить все входные данные
+				var user_id = ( model.create({
+					login: data.login,
+					password: data.password,
+					name:	data.name,
+					sex: data.sex,
+					age: data.age,
+					avatar: file ? file.name : ""
+				})).then(result=>{
+					file ? file.mv('images/avatars/'+result.insertId+file.name,(err) => {
+						if(err) return res.status(500).send(err);
+						res.send({response:1});
+					}) : "";
+				});
+			} else res.status(403).send({error: 'login already taken'})
+		}))	
+		
+		
 	} catch (err) {
-		res.send({error:'internal_error'});
+		res.send({error:'internal_error '+err});
 	}
 }
 // Получение
@@ -33,20 +50,22 @@ exports.session_new = async (req,res) => {
 	res.set('Access-Control-Allow-Origin','*');	
 	var login = req.body.login;
 	var password = req.body.password;
-	console.log(req.body)
+	
 	if (login && password) {
 		try {
 			model.login(login, password).then(result => {
-				console.log(result)
-			if (result.length > 0) {				
-				req.session.loggedin = true;
-				req.session.login = login;
-				
-				res.send({response: 1});
-			} else {
-				res.status(403).send(`Неверные логин или пароль`);
-			}			
-			res.end();
+				console.log("result",result)
+				if (result.length > 0) {	
+
+					req.session.loggedin = true;
+					req.session.login = login;
+					req.session.user_id = result[0].id;
+					
+					res.send({response: {login: login, user_id: result[0].id}});
+				} else {
+					res.status(403).send(`Неверные логин или пароль`);
+				}			
+				res.end();
 			});	
 		} catch (err) {
 			res.send({error:'internal_error'});
@@ -73,8 +92,9 @@ exports.session = async (req,res) => {
 // delete session
 exports.session_del = async (req,res) => {
 	res.set('Access-Control-Allow-Origin','*');	
-	
-	if (req.session.loggedin && req.session.login) {	
+	console.log(req.session)
+	if (req.session.loggedin && req.session.login) {
+		req.session.destroy();	
 		res.send({response: 1});	
 	} else {
 		res.status(401).send('Please enter Username and Password!');
