@@ -11,7 +11,7 @@ const Main = () => {
 	
 	useEffect(() => {
       httpGetImages().then(res => 
-	      setImages(res.response.items),
+	      setImages(res.response.items.reverse()),
 	    );
        
     },[]);
@@ -26,8 +26,8 @@ const Main = () => {
 	      .then(data => {
 	        if(data.response) {
 	        	
-	        	var temp = images;
-	        	temp.push(data.response)
+	        	var temp = images.slice();	        	
+	        	temp.unshift(data.response)
 	        	console.log("temp",temp)
 	        	setImages(temp);
 	        }
@@ -59,7 +59,7 @@ const Main = () => {
 				    </Form.Group>				    
 				</Form>	
 				<Row id="imageRow">
-					{images && images.reverse().map(image =>
+					{images && images.map(image =>
 					
 					    <Col id={image.id} key={image.id} xs={12} md={3} className={s.col}>
 					      <div className={s.image} style={{backgroundImage:"url(http://localhost:8080/images/"+image.id+".jpg)"}}>

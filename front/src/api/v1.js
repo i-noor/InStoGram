@@ -27,6 +27,27 @@ export const httpLogIn = async (form) => {
         .then(str  => str.json())  
 }
 
+export const httpLogOut = async () => {
+    return fetch('http://localhost:8080/api/v1/session/',{
+        method:'DELETE',      
+        headers : { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }})
+        .then(str  => str.json())  
+}
+
+export const httpSignUp = async (form) => {
+    return fetch('http://localhost:8080/api/v1/users',{
+        method:'POST',      
+        headers : { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body:form})
+        .then(str  => str.json())  
+}
+
 export const httpAuth = async (form) => {
     return fetch('http://localhost:8080/api/v1/session/',{
         method:'POST',      
@@ -42,7 +63,7 @@ export const httpAuth = async (form) => {
 export const httpGetUsers = async () => { 
 
   return fetch('http://localhost:8080/api/v1/users/',{
-      method: "POST",      
+      method: "GET",      
     })
   .then(response => response.json())
   .then(json =>  json) 

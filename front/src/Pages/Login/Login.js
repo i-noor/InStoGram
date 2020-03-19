@@ -16,7 +16,11 @@ function Login() {
 	    )
 	    console.log(form)
 	    httpLogIn(form)
-	      .then(data => console.log(data))
+	      .then(data => {	      	
+	      	sessionStorage.setItem('user_id', data.response.user_id);
+	      	sessionStorage.setItem('login', data.response.login);	    
+	      	document.location.href = "/";  	
+	      })
 	      .catch(err => {
 	        console.error(err);	        
 	      });
