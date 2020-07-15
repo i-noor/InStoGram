@@ -1,23 +1,29 @@
-
 export const httpGetImages = async () => {   
-    return fetch('http://localhost:8080/api/v1/images')
+    return fetch('/api/v1/images')
     .then(response => response.json())
     .then(json =>  json) 
-    .catch(console.log)
+    .catch(err=>console.log(err))
+};
+
+export const httpGetImagesByUserId = async (id) => {   
+    return fetch('/api/v1/images?author_id='+id)
+    .then(response => response.json())
+    .then(json =>  json) 
+    .catch(err=>console.log(err))
 };
 
 export const httpSendImage = async (form) => {
-    return fetch('http://localhost:8080/api/v1/images',{ method:'POST', body:form})
+    return fetch('/api/v1/images',{ method:'POST', body:form})
           .then(str  => str.json())
 }
 
 export const httpDeleteImage = async (id) => {
-    return fetch('http://localhost:8080/api/v1/images/'+id,{ method:'DELETE'})
+    return fetch('/api/v1/images/'+id,{ method:'DELETE'})
           .then(str  => str.json())
 }
 
 export const httpLogIn = async (form) => {
-    return fetch('http://localhost:8080/api/v1/session/new',{
+    return fetch('/api/v1/session/new',{
         method:'POST',      
         headers : { 
             'Content-Type': 'application/json',
@@ -28,7 +34,7 @@ export const httpLogIn = async (form) => {
 }
 
 export const httpLogOut = async () => {
-    return fetch('http://localhost:8080/api/v1/session/',{
+    return fetch('/api/v1/session/',{
         method:'DELETE',      
         headers : { 
             'Content-Type': 'application/json',
@@ -38,7 +44,7 @@ export const httpLogOut = async () => {
 }
 
 export const httpSignUp = async (form) => {
-    return fetch('http://localhost:8080/api/v1/users',{
+    return fetch('/api/v1/users',{
         method:'POST',      
         headers : { 
             'Content-Type': 'application/json',
@@ -49,7 +55,7 @@ export const httpSignUp = async (form) => {
 }
 
 export const httpAuth = async (form) => {
-    return fetch('http://localhost:8080/api/v1/session/',{
+    return fetch('/api/v1/session/',{
         method:'POST',      
         headers : { 
             'Content-Type': 'application/json',
@@ -62,21 +68,32 @@ export const httpAuth = async (form) => {
 
 export const httpGetUsers = async () => { 
 
-  return fetch('http://localhost:8080/api/v1/users/',{
+  return fetch('/api/v1/users/',{
       method: "GET",      
     })
   .then(response => response.json())
   .then(json =>  json) 
-	// const response = await fetch('http://localhost:8080/api/v1/user/list', {
- //    	method: 'POST',    	
- //      headers : { 
- //        'Content-Type': 'application/json',
- //        'Accept': 'application/json'
- //       }
- //    }).then(response => console.log(response));
-	// const myJson = await response.json();
-	// console.log(JSON.stringify(myJson)); 
-    // return fetch('/api/v1/user/list')
-        
-    //     .catch(console.log)
+};
+
+export const httpGetUserById = async (id) => { 
+
+  return fetch('/api/v1/users/'+id,{
+      method: "GET",      
+    })
+  .then(response => response.json())
+  .then(json =>  json) 
+};
+
+export const httpUpdateUserInfo = async (form) => { 
+
+  return fetch('/api/v1/users/',{
+      method: "PUT",      
+        headers : { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body:form      
+    })
+  .then(response => response.json())
+  .then(json =>  json) 
 };

@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import {Form, Button, Jumbotron, Container} from 'react-bootstrap'
-import Navbar from "../../components/Navbar";
+import {Form, Button, Jumbotron, Container,Card,Image} from 'react-bootstrap'
 import { httpGetUsers} from "../../api/v1";
 import s from "./Users.module.scss"
-
+import defaultAvatar from "../../assets/defaultAvatar.png";
 
 const Users = () => { 
 	const [users, setUsers] = useState([]);
@@ -31,11 +30,26 @@ const Users = () => {
 
     return (
     	<>
-    	{console.log(users)}
-    	<Navbar />
+    	{console.log(users)}    	
     	<Container>
 	    	<Jumbotron className={s.jumbotron}>      
-		        {users && users.map(user=><div key={user.id}>{user.name}</div>)}
+		        {users && users.map(user=>{		
+						let avatar = user && user.avatar ? "/images/avatars/"+user.avatar : defaultAvatar;				
+						return <a href={"/#/Profile/"+user.id} key={user.id}>
+						<Card>
+							<Card.Body >
+								<div className={s.nameWrapper}>
+									<div className={s.avatar} style={{backgroundImage:'url('+avatar+')'}}  />
+									<div>{user.name}</div>
+								</div>
+							</Card.Body>
+						</Card>
+							<div>
+							
+							</div>
+						</a>
+						}					
+		        	)}
 			</Jumbotron>
 		</Container>
 		</>

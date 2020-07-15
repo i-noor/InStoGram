@@ -1,11 +1,12 @@
 import React, {useState}  from 'react';
 import {Form, Button, Jumbotron, Container} from 'react-bootstrap'
-import Navbar from "../../components/Navbar";
 import { httpSignUp} from "../../api/v1";
-import s from "./Registration.module.scss"
+import s from "./Registration.module.scss";
+import { FiCheckCircle } from "react-icons/fi";
 
 function Registration() {	
 	const [errors, setErrors] = useState({});
+	const [success, setSuccess] = useState(false);
 	const id = (e) => {return document.getElementById(e)}
 	const onSignUp = async (e) => {	  
 		e.preventDefault(); 
@@ -17,13 +18,17 @@ function Registration() {
 		    	'password': id('password').value,
 		    	'name': id('name').value,
 		    	'sex': id('sex').value,
-		    	'age': id('age').value,
+		    	'age': id('age').value,		    	
 		    })
 		    // form.append('file',id('photo').files[0]);
 		    console.log(form)
 		    httpSignUp(form)
 		      .then(data => {
+		      	console.log(data)
 		      	if(data.error && data.error=="login already taken") setErrors({login:data.error})
+		      	if (data.response == 1) {
+		      		setSuccess(true);
+		      	}
 		      })
 		      .catch(err => {
 		        console.error(err);	        
@@ -31,20 +36,14 @@ function Registration() {
 		  } else {
 		  	setErrors({password:"passwords don't match"})
 		  }	    
-	  }  
-
-	const onChangeImage = async () => {
-
-	}
-
+	  }  	
 
     return (
-    	<>
-    	<Navbar />
+    	<>    	
     	<Container>
 	    	<Jumbotron className={s.jumbotron}>      
-		        <Form id="form" onSubmit={onSignUp}>
-		        	<Form.Label className={s.title}>Вход</Form.Label>
+		        {!success ? <Form id="form" onSubmit={onSignUp}>
+		        	<Form.Label className={s.title}>Регистрация</Form.Label>
 				  <Form.Group controlId="login">				  			    
 				    <Form.Control type="text" placeholder="Логин" isInvalid={!!errors.login} required/>
 				    <Form.Control.Feedback type="invalid">
@@ -72,15 +71,13 @@ function Registration() {
 				  </Form.Group>
 				  <Form.Group controlId="age">				    
 				    <Form.Control type="number" placeholder="Возраст" required/>
-				  </Form.Group>
-				  <Form.Group controlId="photo">
-					    <Form.Label variant="dark" type="button" className={s.label}>
-							Загрузить аватар
-					    </Form.Label>
-					    <Form.Control  style={{display: 'none'}} type="file" accept="image/jpeg,image/png,image/gif" onChange={() => onChangeImage()} name="filedata" />
-				    </Form.Group>	
+				  </Form.Group>				 
 				  <Button variant="dark" type="submit">Зарегистрироваться</Button> 
-				</Form>				 
+				</Form>	:
+				<div className={s.success}>
+					<FiCheckCircle></FiCheckCircle>
+				</div>
+			}			 
 			</Jumbotron>
 		</Container>
 		</>

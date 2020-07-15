@@ -4,11 +4,12 @@
 .label{
 	color:$base-color;
 	font-size: 28px;
+	cursor: pointer;
 }
 
 .image{
-	height: 200px;
-	width: 200px;
+	height: 255px;
+    width: 255px;
 	background-size: cover;
 	background-position: center;
 	border-radius: 5px

@@ -1,6 +1,6 @@
 // Полезные функции
 var f = require("../functions");
-
+var path = require('path');
 // Модель для работы с бд
 var model = require("../models/user");
 
@@ -11,13 +11,14 @@ exports.add = (req,res) => {
 	var data = req.body;
 	console.log(req)
 	// Обязательное поле
-	if(!('login' in data) || data.login == '') return res.send({error:'parameter login is not defined'});
-	if(!('password' in data) || data.password == '') return res.send({error:'parameter password is not defined'});
+	if(!('login' in data) || data.login == '') return res.status(400).send({error:'parameter login is not defined'});
+	if(!('password' in data) || data.password == '') return res.status(400).send({error:'parameter password is not defined'});
 
 	var name = f.htmlspecialchars(data.name);
 	var age = +f.parse_int(data.age);
 	let file;
 	if (req.files) file = req.files.file;
+	console.log(file,"file")
 
 	try {	
 		(model.get_by_login(data.login).then(result=>{
@@ -33,11 +34,11 @@ exports.add = (req,res) => {
 					avatar: file ? file.name : ""
 				})).then(result=>{
 					file ? file.mv('images/avatars/'+result.insertId+file.name,(err) => {
-						if(err) return res.status(500).send(err);
-						res.send({response:1});
+						if(err) return res.status(500).send(err);						
 					}) : "";
+					return res.send({response:1});
 				});
-			} else res.status(403).send({error: 'login already taken'})
+			} else res.status(409).send({error: 'login already taken'})
 		}))	
 		
 		
@@ -82,17 +83,16 @@ exports.session = async (req,res) => {
 	res.set('Access-Control-Allow-Origin','*');	
 	
 	if (req.session.loggedin && req.session.login) {	
-		res.send({response: login});	
+		res.send({response: {login: req.session.login, user_id: req.session.user_id}});	
 	} else {
-		res.status(401).send('Please enter Username and Password!');
-		res.end();
+		res.send({response: 0});			
 	}		
 }
 
 // delete session
 exports.session_del = async (req,res) => {
 	res.set('Access-Control-Allow-Origin','*');	
-	console.log(req.session)
+	console.log(req.session.loggedin, req.session.login)
 	if (req.session.loggedin && req.session.login) {
 		req.session.destroy();	
 		res.send({response: 1});	
@@ -169,6 +169,8 @@ exports.update = async (req,res) => {
 	// Проверяем правильность входных параметров
 	var obj = {};
 	if('name'	in data && data.name.length)	obj.name	= f.htmlspecialchars(data.name);
+	if('password'	in data && data.password.length)	obj.password	= f.htmlspecialchars(data.password);
+	if('sex'	in data && data.sex.length)	obj.sex	= f.htmlspecialchars(data.sex);
 	if('age'	in data && data.age>0)			obj.age		= f.parse_int(data.age);
 
 	try {

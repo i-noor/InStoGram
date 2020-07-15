@@ -1,78 +1,21 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {Form, Button, Container, Row, Col, Image} from 'react-bootstrap'
-import { httpGetImages, httpSendImage, httpDeleteImage} from "../../api/v1";
+import {Container} from 'react-bootstrap'
 import Images from "../../components/Images";
-import Navbar from "../../components/Navbar";
-import { FiPlusSquare, FiTrash2 } from "react-icons/fi";
+import { httpGetImages} from "../../api/v1";
 import s from "./Main.module.scss"
 
-const Main = () => { 
+const Main = () => { 	
 	const [images, setImages] = useState([]);
-	
 	useEffect(() => {
-      httpGetImages().then(res => 
-	      setImages(res.response.items.reverse()),
-	    );
-       
-    },[]);
-	   
-
-	const id = (e) => {return document.getElementById(e)}
-
-	const onSendImage = async () => {
-	    var form = new FormData();
-	    form.append('file',id('file').files[0]);
-	    httpSendImage(form)
-	      .then(data => {
-	        if(data.response) {
-	        	
-	        	var temp = images.slice();	        	
-	        	temp.unshift(data.response)
-	        	console.log("temp",temp)
-	        	setImages(temp);
-	        }
-	        else if(data.error) console.log(data.error);
-	        
-	      })
-	      .catch(err => {
-	        console.error(err);	        
-	      });
-	  }  
-
-	  const onDeleteImage = async (id) => {
-	  	httpDeleteImage(id).then(data => {
-	  		console.log(data.response);
-	  		if (data.response == 1) document.getElementById(id).style.display = 'none';
-	  	})
-	  }
-
-	  
-    return (
-        <div className="App">
-	      <Navbar />
-	      {console.log(images)}
-	      <Container>	    	      
-		        <Form method="post" encType="multipart/form-data">
-			        <Form.Group controlId="file">
-					    <Form.Label className={s.label}><FiPlusSquare /></Form.Label>
-					    <Form.Control  style={{display: 'none'}} type="file" accept="image/jpeg,image/png,image/gif" onChange={() => onSendImage()} name="filedata" />
-				    </Form.Group>				    
-				</Form>	
-				<Row id="imageRow">
-					{images && images.map(image =>
-					
-					    <Col id={image.id} key={image.id} xs={12} md={3} className={s.col}>
-					      <div className={s.image} style={{backgroundImage:"url(http://localhost:8080/images/"+image.id+".jpg)"}}>
-					      <FiTrash2 onClick={() => onDeleteImage(image.id)} className={s.delete}>
-					      </FiTrash2>
-					     </div>
-					    </Col>					    
-						  
-					  )}
-				</Row>
-				<div id="res"></div>		
-		</Container>	      
-	    </div>
+		httpGetImages().then(res => 
+			setImages(res.response.items.reverse()),
+		  );		 
+	  },[]);
+	  console.log(images)
+    return (   
+	    <Container>	 
+			{images.length > 0 && <Images images={images} delete={false}/>}
+		</Container>  
     )
 	
 };

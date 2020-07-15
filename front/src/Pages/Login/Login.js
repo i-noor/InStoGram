@@ -1,6 +1,5 @@
 import React from 'react';
 import {Form, Button, Jumbotron, Container} from 'react-bootstrap'
-import Navbar from "../../components/Navbar";
 import { httpLogIn} from "../../api/v1";
 import s from "./Login.module.scss"
 
@@ -27,8 +26,7 @@ function Login() {
 	  }  
 
     return (
-    	<>
-    	<Navbar />
+    	<>    	
     	<Container>
 	    	<Jumbotron className={s.jumbotron}>      
 		        <Form id="form" onSubmit={onLogIn}>

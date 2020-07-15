@@ -4,13 +4,15 @@ module.exports = {
 	},
     dbh: require("./dbh"),
 	session: {
-		secret: 'XSS',
-		key: 'sid',
-		cookie: {			
-			secure: true,
-			maxAge: 60*60*1000,
-		},
-		resave: false,
-		saveUninitialized: true,
-	},
+    store: new redisStorage({
+      host: '127.0.0.1',
+      port: 6379,
+      client: client, 
+      ttl: 86400
+    }),
+    secret: 'ThisIsHowYouUseRedisSessionStorage',
+  	name: '_redisPractice',
+    resave: false,
+    saveUninitialized: true
+  },
 }

@@ -7,6 +7,9 @@ var fileUpload  = require('express-fileupload');
 const multer  = require("multer");
 const mysql = require("mysql2");
 var cookieParser = require('cookie-parser');
+redisStorage = require('connect-redis')(session),
+redis = require('redis'),
+client = redis.createClient()
  
  // Настройки
 var config = require("./config");

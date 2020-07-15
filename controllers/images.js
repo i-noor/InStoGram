@@ -3,8 +3,9 @@ var f = require("../functions");
 var path = require('path');
 // Модель для работы с бд
 var model = require("../models/image");
+var modelUser = require("../models/user");
+var fs = require('fs');
 
-var author_id = 1;
 // Добавление
 exports.add = (req,res) => {
 	// Поскольку в app.js мы подключили app.use(fileUpload()), у req доступно свойство req.files
@@ -12,38 +13,51 @@ exports.add = (req,res) => {
 	// В данном случае мы принимаем файл с именем "file"
 	console.log(req.files)
 	if(!req.files || !req.files.file) return res.send({error:'file was not sent'});
+	if(!req.session.user_id) return res.status(403).send({error:'Unauthorized'});
 
-	let file = req.files.file;
-	console.log(file)
+	let file = req.files.file;	
+	let ext = path.extname(file.name);
+	console.log(ext)
 	// Проверяем тип файла
 	if(!/image\/(jpe?g|png)/.test(file.mimetype)) {
 		return res.send("Файл должен быть формата jpeg или png!");
 	}
 
 	try {
-		// Нужно проверить все входные данные
-		var image_id = ( model.create({
-			name:	file.name,
-			mimetype:	file.mimetype,
-			author_id: author_id
-		})).then(result=>{
-			var ext = path.extname(file.name);
-			// Сохраняем файл по указанному адресу
-			file.mv('images/'+result.insertId+ext,(err) => {
-				if(err) return res.status(500).send(err);
-				res.send({response:{
-							id:result.insertId,
-							name:	file.name,
-							mimetype:	file.mimetype,
-							author_id: author_id
-						}});
-			});
-		});		
+		if (req.body.type == "avatar"){
+			var obj = {};
+			obj.avatar = req.session.user_id+ext;
+			var image_id = ( modelUser.update(req.session.user_id, obj)).then(result=>{
+				
+				// Сохраняем файл по указанному адресу
+				file.mv('images/avatars/'+req.session.user_id+ext,(err) => {
+					if(err) return res.status(500).send(err);
+					res.send({response:1});
+				});
+			});	
+		} else {			
+			var image_id = ( model.create({
+				name:	file.name,
+				mimetype:	file.mimetype,
+				author_id: req.session.user_id
+			})).then(result=>{
+				
+				// Сохраняем файл по указанному адресу
+				file.mv('images/'+result.insertId+ext,(err) => {
+					if(err) return res.status(500).send(err);
+					res.send({response:{
+								id:result.insertId,
+								name:	file.name,
+								mimetype:	file.mimetype,
+								author_id: req.session.user_id
+							}});
+				});
+			});	
+		}
+			
 	} catch (err) {
 		res.send({error:'internal_error'});
-	}
-
-	
+	}	
 }
 
 // Получение
@@ -61,9 +75,10 @@ exports.get = async (req,res) => {
 }
 // Получение списка
 exports.list = async (req,res) => {
-	var data = req.body;
+	var data = req.query;
 
 	// Проверяем входные параметры
+	var author_id		= +f.parse_int(data.author_id);
 	var offset			= +f.parse_int(data.offset);
 	var limit			= +f.parse_int(data.limit);
 	var start			= +f.parse_int(data.start_application_id);
@@ -85,8 +100,8 @@ exports.list = async (req,res) => {
 
 	try {
 		await Promise.all([
-			model.list(offset,limit,options,start,dir,rev,1).then(data => output.count = data),
-			model.list(offset,limit,options,start,dir,rev)  .then(data => output.items = (data ? data : [])),
+			model.list(author_id,offset,limit,options,start,dir,rev,1).then(data => output.count = data),
+			model.list(author_id,offset,limit,options,start,dir,rev)  .then(data => output.items = (data ? data : [])),
 		]);
 
 		res.send({response:output});
@@ -117,9 +132,26 @@ exports.delete = async (req,res) => {
 	var image_id = req.params.imageId;
 
 	try {
-		// Предполагается, что мы еще до этого проверили подлинность image_id
-		await model.delete(image_id);
+		var output = await model.gti(image_id).then(result=>{
+			
+			if (result.author_id != req.session.user_id) return res.status(403).send({error:'Unauthorized'});
+			var ext = path.extname(result.name);
+
+			var filePath = 'images/'+image_id+ext; 
+			console.log(filePath)
+			model.delete(image_id);
+			fs.access(filePath, (err) => {
+			    if (err) {
+			        console.log("The file does not exist.");
+			    } else {
+			       fs.unlink(filePath, function(){console.log('Deleted image')});
+			    }
+			});			
+		});
+		
+		
 		res.send({response:1});
+		
 	} catch (err) {
 		res.send({error:'internal_error'});
 	}
